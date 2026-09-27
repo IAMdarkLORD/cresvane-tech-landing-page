@@ -1,0 +1,45 @@
+.footer {
+  padding: 3rem var(--space-gutter) 4rem;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  border-top: 1px solid var(--color-border);
+  position: relative;
+  z-index: 2;
+}
+
+.footer__desc {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.footer__links a {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.footer__links a:hover {
+  color: var(--color-cyan);
+}
+
+.footer__copy {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer__signoff {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-border);
+  letter-spacing: 0.1em;
+}

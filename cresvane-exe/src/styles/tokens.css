@@ -1,0 +1,22 @@
+:root {
+  --color-bg: #07111f;
+  --color-surface: #0f2236;
+  --color-border: #1e3a55;
+  --color-text: #eaf2f8;
+  --color-muted: #8aa1b4;
+  --color-cyan: #00d9ff;
+  --color-gold: #ffb400;
+  --color-alert: #ff4d5e;
+
+  --font-head: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --radius-card: 18px;
+  --radius-btn: 10px;
+  --space-section: clamp(4rem, 12vh, 7rem);
+  --space-gutter: clamp(1.25rem, 5vw, 3rem);
+  --max-width: 1400px;
+  --topbar-h: 4rem;
+}

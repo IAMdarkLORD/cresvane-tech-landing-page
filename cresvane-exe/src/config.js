@@ -1,0 +1,202 @@
+/** All editable site content — change copy here only. */
+export const CONFIG = {
+  meta: {
+    title: 'Cresvane — We build the tech your business needs',
+    description:
+      'Cresvane designs and builds custom websites, web apps, automations, integrations, dashboards and AI tools for businesses.',
+    ogImage: '/og-image.png',
+    themeColor: '#07111F',
+  },
+  email: 'info@cresvaneconsultancy.com',
+  phone: '[PHONE / WHATSAPP]',
+  city: '[CITY]',
+  bookingLink: '[BOOKING LINK]',
+  linkedin: '[LINKEDIN]',
+  instagram: '[INSTAGRAM]',
+  formEndpoint: '[FORM_ENDPOINT]',
+  honeypotField: 'botcheck',
+
+  loaderLines: [
+    '> initializing Cresvane.EXE',
+    '> loading modules: discover / design / build / automate / launch',
+    '> status: ready',
+  ],
+
+  hero: {
+    label: 'SYSTEM // 01',
+    headline: 'We build the tech your business keeps wishing it had.',
+    subheadline:
+      'Websites, web apps, automations and integrations — designed, built and supported by one team.',
+    story:
+      'Every business runs on a pile of spreadsheets, disconnected tools and manual steps. Cresvane finds the friction, then builds the software that removes it.',
+    scrollCue: 'select a module ↓',
+  },
+
+  deck: {
+    label: 'SYSTEM // 02',
+    title: 'Select a module',
+  },
+
+  contact: {
+    label: 'SYSTEM // 03',
+    title: 'Open a channel',
+    subtitle: "Three taps. Then pick how you'd like to talk.",
+    windowTitle: 'contact.exe',
+    email: 'info@cresvaneconsultancy.com',
+    whatsapp: '[WHATSAPP_NUMBER]',
+    whatsappEnabled: false,
+    calLink: '[CAL.COM USERNAME/EVENT]',
+    formEndpointKey: '[WEB3FORMS_ACCESS_KEY]',
+    timezone: 'Asia/Dubai',
+    replyTime: 'Usually replies within a few hours',
+  },
+
+  tickerItems: [
+    'NEW MODULE DETECTED',
+    'AUTOMATION ONLINE',
+    'INTEGRATION READY',
+    'SYSTEM UPGRADE AVAILABLE',
+  ],
+
+  footer: {
+    description: 'Custom tech for businesses that are done with workarounds.',
+    copyright: '© 2026 Cresvane',
+    signoff: 'session active — thanks for visiting',
+  },
+
+  modules: [
+    {
+      id: 'discover',
+      num: '01',
+      name: 'DISCOVER',
+      teaser: 'Find the friction.',
+      status: 'ready',
+      statusLabel: 'ONLINE',
+      illustration: 'radar',
+      panelFile: 'module_01.exe',
+      panelTitle: 'Find the friction.',
+      panelText:
+        'We sit with your team, map how work actually happens, and pinpoint where time and money leak.',
+      deliverables: [
+        'Workflow map',
+        'Problems ranked by impact',
+        'Recommended solution',
+        'Rough scope and budget',
+      ],
+      timeline: 'Typical timeline: about 1 week',
+    },
+    {
+      id: 'design',
+      num: '02',
+      name: 'DESIGN',
+      teaser: 'See it before we build it.',
+      status: 'ready',
+      statusLabel: 'ONLINE',
+      illustration: 'wireframe',
+      panelFile: 'module_02.exe',
+      panelTitle: 'See it before we build it.',
+      panelText:
+        'We turn the plan into user flows and a clickable prototype so you can test the idea before a line of code is written.',
+      deliverables: ['User flows', 'UI design', 'Clickable prototype', 'Technical plan'],
+      timeline: 'Typical timeline: 1–2 weeks',
+    },
+    {
+      id: 'build',
+      num: '03',
+      name: 'BUILD',
+      teaser: 'Clean code, shipped in sprints.',
+      status: 'ready',
+      statusLabel: 'ONLINE',
+      illustration: 'code',
+      panelFile: 'module_03.exe',
+      panelTitle: 'Clean code, shipped in sprints.',
+      panelText:
+        'We build in short cycles with a working demo every week, so you always see progress and can steer.',
+      deliverables: ['Weekly demos', 'A staging link', 'Tested, documented code that you own'],
+      timeline: 'Typical timeline: 2–8 weeks',
+    },
+    {
+      id: 'automate',
+      num: '04',
+      name: 'AUTOMATE & INTEGRATE',
+      teaser: 'Make your tools talk.',
+      status: 'ready',
+      statusLabel: 'ONLINE',
+      illustration: 'nodes',
+      panelFile: 'module_04.exe',
+      panelTitle: 'Make your tools talk.',
+      panelText:
+        'We connect the tools you already use (accounting, CRM, e-commerce, spreadsheets, email) and automate the repetitive work between them.',
+      deliverables: [
+        'System integrations',
+        'Automated workflows',
+        'Live dashboards',
+        'Fewer manual errors',
+      ],
+      timeline: 'Typical timeline: 1–4 weeks',
+    },
+    {
+      id: 'launch',
+      num: '05',
+      name: 'LAUNCH & SUPPORT',
+      teaser: 'Go live, then keep improving.',
+      status: 'ready',
+      statusLabel: 'ONLINE',
+      illustration: 'graph',
+      panelFile: 'module_05.exe',
+      panelTitle: 'Go live, then keep improving.',
+      panelText:
+        'We deploy, train your team, monitor everything, and keep improving it as your business grows.',
+      deliverables: ['Deployment', 'Handover documentation', 'Team training', 'Ongoing support plan'],
+      timeline: 'Typical timeline: ongoing',
+    },
+    {
+      id: 'what-we-build',
+      num: '06',
+      name: 'WHAT WE BUILD',
+      teaser: 'Solutions, not just software.',
+      status: 'ready',
+      statusLabel: 'CATALOG',
+      illustration: 'grid',
+      panelFile: 'module_06.exe',
+      panelTitle: 'Solutions, not just software.',
+      panelText:
+        'From customer-facing sites to internal systems — we build what removes friction in your day-to-day.',
+      deliverables: [
+        'Business websites and landing pages',
+        'Web apps and client portals',
+        'Internal dashboards',
+        'Workflow automation',
+        'API integrations',
+        'AI-powered assistants and tools',
+      ],
+      isBuildGrid: true,
+    },
+    {
+      id: 'products',
+      num: '07',
+      name: 'PRODUCTS',
+      teaser: 'Our own tools — coming soon.',
+      status: 'locked',
+      statusLabel: 'LOCKED',
+      illustration: 'lock',
+      panelFile: 'module_07.exe',
+      panelTitle: 'Early access',
+      panelText:
+        'Our own tools for businesses are in development. Join the early-access list to be first in line.',
+      locked: true,
+    },
+    {
+      id: 'contact',
+      num: '08',
+      name: 'CONTACT',
+      teaser: 'Start a project.',
+      status: 'open',
+      statusLabel: 'OPEN CHANNEL',
+      illustration: 'signal',
+      isContact: true,
+      panelTitle: 'Start a project.',
+      panelText: 'Tell us what you are trying to fix. We will respond within one business day.',
+    },
+  ],
+};

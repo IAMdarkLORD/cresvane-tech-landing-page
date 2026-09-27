@@ -1,0 +1,61 @@
+.hero.section {
+  min-height: unset;
+  padding: calc(var(--topbar-h) + 1rem) var(--space-gutter) 1.25rem;
+}
+
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.65;
+  z-index: -1;
+  max-height: 520px;
+}
+
+.hero__headline {
+  font-family: var(--font-head);
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  max-width: 14ch;
+  margin-bottom: 1.25rem;
+}
+
+.hero__sub {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: var(--color-muted);
+  max-width: 42ch;
+  margin-bottom: 1.5rem;
+}
+
+.hero__story {
+  max-width: 50ch;
+  opacity: 0.9;
+  margin-bottom: 1.25rem;
+}
+
+.hero__cue {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-cyan);
+  letter-spacing: 0.15em;
+  animation: hero-blink 2s ease-in-out infinite;
+}
+
+@keyframes hero-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__cue {
+    animation: none;
+  }
+}

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Cresvane — We build the tech your business needs</title>
+    <meta name="description" content="Cresvane designs and builds custom websites, web apps, automations, integrations, dashboards and AI tools for businesses." />
+    <meta name="theme-color" content="#07111F" />
+    <meta property="og:title" content="Cresvane — We build the tech your business needs" />
+    <meta property="og:description" content="Websites, web apps, automations and integrations — designed, built and supported by one team." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    <script>
+      try {
+        if (sessionStorage.getItem('cresvane_booted')) document.documentElement.classList.add('booted');
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="bg-texture" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="custom-cursor" id="cursor-dot" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+    <div id="loader" class="loader" role="dialog" aria-label="Loading Cresvane">
+      <canvas id="loader-canvas" class="loader__canvas" aria-hidden="true"></canvas>
+      <div id="loader-lines" class="loader__lines"></div>
+      <div class="loader__progress">
+        <p class="loader__pct" id="loader-pct">0%</p>
+        <div class="loader__bar"><div class="loader__bar-fill" id="loader-bar-fill"></div></div>
+      </div>
+      <button type="button" class="loader__skip" id="loader-skip">Skip ›</button>
+    </div>
+
+    <header class="topbar" id="topbar">
+      <div class="wordmark">Cresvane <span class="wordmark-tag">EXE</span></div>
+      <div class="topbar__actions">
+        <button type="button" class="btn-icon" id="sound-toggle" aria-pressed="false">Sound OFF</button>
+        <button type="button" class="btn-text" id="top-contact">Contact</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero section" id="hero" aria-labelledby="hero-headline">
+        <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
+        <p class="system-label" id="hero-label"></p>
+        <h1 class="hero__headline glitch-target" id="hero-headline"></h1>
+        <p class="hero__sub" id="hero-sub"></p>
+        <p class="hero__story" id="hero-story"></p>
+        <p class="hero__cue" id="hero-cue" aria-hidden="true"></p>
+
+        <div class="deck deck--in-hero" id="deck" aria-labelledby="deck-title">
+          <p class="system-label" id="deck-label"></p>
+          <h2 class="deck__title" id="deck-title"></h2>
+          <div class="deck__scroll">
+            <div class="deck__track" id="deck-track" role="list"></div>
+            <div class="deck__progress" aria-hidden="true"><div class="deck__progress-fill" id="deck-progress-fill"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__track" id="ticker-track"></div>
+      </div>
+
+      <section class="contact section" id="contact" aria-labelledby="contact-heading">
+        <p class="system-label" id="contact-label"></p>
+        <h2 class="contact__title" id="contact-heading"></h2>
+        <p class="contact__subtitle" id="contact-subtitle"></p>
+        <p class="contact__shortcuts" id="contact-shortcuts"></p>
+        <div class="contact__terminal contact__terminal--intake" id="contact-terminal"></div>
+      </section>
+    </main>
+
+    <footer class="footer" id="footer"></footer>
+
+    <div class="panel-overlay" id="panel-overlay" aria-hidden="true"></div>
+    <div class="panel" id="module-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" data-lenis-prevent hidden>
+      <div class="panel__titlebar">
+        <div class="panel__dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="panel__filename" id="panel-filename"></span>
+        <button type="button" class="panel__close" id="panel-close" aria-label="Close panel">×</button>
+      </div>
+      <div class="panel__body" id="panel-body" data-lenis-prevent></div>
+      <button type="button" class="panel__nav panel__nav--prev" id="panel-prev" aria-label="Previous module">‹</button>
+      <button type="button" class="panel__nav panel__nav--next" id="panel-next" aria-label="Next module">›</button>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

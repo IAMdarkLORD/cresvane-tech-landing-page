@@ -1,0 +1,92 @@
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  clip-path: inset(0 0 0 0);
+}
+
+.loader.is-done {
+  pointer-events: none;
+}
+
+.loader__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.loader__lines {
+  position: relative;
+  z-index: 1;
+}
+
+.loader__line {
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  color: var(--color-cyan);
+  min-height: 1.4em;
+  margin-bottom: 0.35rem;
+  overflow: hidden;
+}
+
+.loader__progress {
+  position: absolute;
+  bottom: clamp(3rem, 12vh, 5rem);
+  left: clamp(1.5rem, 5vw, 4rem);
+  right: clamp(1.5rem, 5vw, 4rem);
+  max-width: 420px;
+  z-index: 1;
+}
+
+.loader__pct {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-bottom: 0.5rem;
+}
+
+.loader__bar {
+  height: 2px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loader__bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--color-cyan);
+  box-shadow: 0 0 12px var(--color-cyan);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.loader__skip {
+  position: absolute;
+  bottom: clamp(1.5rem, 5vw, 2rem);
+  right: clamp(1.5rem, 5vw, 2rem);
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  background: none;
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.loader__skip:hover,
+.loader__skip:focus-visible {
+  color: var(--color-cyan);
+  border-color: var(--color-cyan);
+  box-shadow: 0 0 16px rgba(0, 217, 255, 0.25);
+  outline: none;
+}
