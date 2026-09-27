@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cresvane — We build the tech your business needs</title>
+  <meta name="description" content="Cresvane designs and builds custom websites, web apps, automations, integrations, dashboards and AI tools for businesses.">
+  <meta name="theme-color" content="#07111F">
+  <meta property="og:title" content="Cresvane — We build the tech your business needs">
+  <meta property="og:description" content="Websites, web apps, automations and integrations — designed, built and supported by one team.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%2307111F' width='32' height='32' rx='6'/%3E%3Cpath fill='%2300D9FF' d='M22 8H14c-4.4 0-8 3.6-8 8s3.6 8 8 8h8c4.4 0 8-3.6 8-8s-3.6-8-8-8zm0 12h-8c-2.2 0-4-1.8-4-4s1.8-4 4-4h8c2.2 0 4 1.8 4 4s-1.8 4-4 4z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    try {
+      if (sessionStorage.getItem('cresvane_booted')) {
+        document.documentElement.classList.add('booted');
+      }
+    } catch (e) {}
+  </script>
+  <style>
+    html.booted #loader { display: none; }
+    :root {
+      --bg: #07111F;
+      --surface: #0F2236;
+      --border: #1E3A55;
+      --text: #EAF2F8;
+      --muted: #8AA1B4;
+      --cyan: #00D9FF;
+      --gold: #FFB400;
+      --alert: #FF4D5E;
+      --ease: cubic-bezier(.2, .8, .2, 1);
+      --font-head: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    body.touch-device { cursor: auto; }
+
+    .bg-texture {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.55) 100%),
+        linear-gradient(rgba(30,58,85,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,58,85,.12) 1px, transparent 1px);
+      background-size: 100% 100%, 48px 48px, 48px 48px;
+    }
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: .04;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.4) 2px, rgba(0,0,0,.4) 4px);
+    }
+
+    .custom-cursor {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+      transition: width .2s var(--ease), height .2s var(--ease);
+    }
+    .custom-cursor-ring {
+      position: fixed;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(0, 217, 255, .5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .25s var(--ease), height .25s var(--ease), border-color .2s;
+    }
+    .custom-cursor-ring.hover { width: 48px; height: 48px; border-color: var(--cyan); }
+
+    /* Loader */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: clamp(1.5rem, 5vw, 4rem);
+      transition: transform .7s var(--ease);
+    }
+    #loader.wipe { transform: translateY(-100%); }
+    #loader.hidden { display: none; }
+    #loader-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .loader-log {
+      font-family: var(--font-mono);
+      font-size: clamp(.75rem, 2vw, .9rem);
+      color: var(--cyan);
+      min-height: 1.4em;
+      margin-bottom: .35rem;
+      opacity: 0;
+      animation: fadeIn .3s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+    .loader-progress-wrap {
+      position: absolute;
+      bottom: clamp(3rem, 12vh, 5rem);
+      left: clamp(1.5rem, 5vw, 4rem);
+      right: clamp(1.5rem, 5vw, 4rem);
+      max-width: 420px;
+    }
+    .loader-pct {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--muted);
+      margin-bottom: .5rem;
+    }
+    .loader-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      transition: width .15s linear;
+    }
+    .loader-skip {
+      position: absolute;
+      bottom: clamp(1.5rem, 5vw, 2rem);
+      right: clamp(1.5rem, 5vw, 2rem);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      padding: .5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, box-shadow .2s;
+    }
+    .loader-skip:hover, .loader-skip:focus-visible {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px rgba(0, 217, 255, .25);
+      outline: none;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem clamp(1rem, 4vw, 2.5rem);
+      background: rgba(7, 17, 31, .75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .wordmark {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -.02em;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .wordmark-tag {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      padding: .15rem .4rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--cyan);
+      letter-spacing: .1em;
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .btn-icon, .btn-text {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .25s var(--ease);
+    }
+    .btn-icon {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .55rem .85rem;
+    }
+    .btn-icon.on { color: var(--cyan); border-color: var(--cyan); }
+    .btn-icon:hover, .btn-icon:focus-visible {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 217, 255, .2);
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+    .btn-text {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: .55rem 1.1rem;
+    }
+    .btn-text:hover, .btn-text:focus-visible {
+      background: rgba(255, 180, 0, .1);
+      box-shadow: 0 0 24px rgba(255, 180, 0, .25);
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    main { position: relative; z-index: 2; }
+
+    .system-label {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    section {
+      padding: clamp(4rem, 12vh, 7rem) clamp(1.25rem, 5vw, 3rem);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .55s var(--ease), transform .55s var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 5rem;
+    }
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .65;
+      z-index: -1;
+    }
+    .hero h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      max-width: 14ch;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1.glitch-active {
+      text-shadow: 2px 0 var(--alert), -2px 0 var(--cyan);
+    }
+    .hero .sub {
+      font-size: clamp(1rem, 2.2vw, 1.25rem);
+      color: var(--muted);
+      max-width: 42ch;
+      margin-bottom: 1.5rem;
+    }
+    .hero .story {
+      max-width: 50ch;
+      color: var(--text);
+      opacity: .9;
+      margin-bottom: 3rem;
+    }
+    .scroll-cue {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--cyan);
+      letter-spacing: .15em;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+    /* Module deck */
+    .deck-header h2 {
+      font-family: var(--font-head);
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      letter-spacing: -.02em;
+      margin-bottom: 2rem;
+    }
+    .deck-scroll {
+      position: relative;
+      margin: 0 -1.25rem;
+      padding: 0 1.25rem 1rem;
+    }
+    .deck-track {
+      display: flex;
+      gap: clamp(-2rem, -4vw, -1rem);
+      padding: 2rem 0 3rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .deck-track::-webkit-scrollbar { display: none; }
+    @media (min-width: 1024px) {
+      .deck-track {
+        justify-content: center;
+        overflow: visible;
+        flex-wrap: nowrap;
+      }
+    }
+    .deck-progress {
+      display: none;
+      height: 2px;
+      background: var(--border);
+      margin-top: .5rem;
+      border-radius: 2px;
+    }
+    @media (max-width: 1023px) {
+      .deck-progress { display: block; }
+      .deck-progress-fill {
+        height: 100%;
+        width: 12.5%;
+        background: var(--cyan);
+        border-radius: 2px;
+        transition: width .2s;
+      }
+    }
+
+    .module-card {
+      flex: 0 0 min(220px, 42vw);
+      aspect-ratio: 3 / 4;
+      scroll-snap-align: center;
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(15, 34, 54, .72);
+      backdrop-filter: blur(10px);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: transform .4s var(--ease), opacity .35s, border-color .3s, box-shadow .3s, filter .35s;
+      transform-origin: center bottom;
+    }
+    @media (min-width: 1024px) {
+      .module-card {
+        flex: 0 0 200px;
+        margin-left: -28px;
+      }
+      .module-card:first-child { margin-left: 0; }
+      .module-card:nth-child(odd) { transform: rotate(-2deg); }
+      .module-card:nth-child(even) { transform: rotate(1.5deg); }
+      .deck-track:hover .module-card { opacity: .55; filter: brightness(.85); }
+      .deck-track .module-card:hover,
+      .deck-track .module-card:focus-visible {
+        opacity: 1 !important;
+        filter: brightness(1) !important;
+        transform: rotate(0deg) translateY(-16px) scale(1.04) !important;
+        border-color: var(--cyan);
+        box-shadow: 0 20px 50px rgba(0, 217, 255, .2);
+        z-index: 10;
+      }
+    }
+    .module-card.contact-card {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px rgba(255, 180, 0, .15);
+    }
+    .module-card.locked {
+      opacity: .65;
+      filter: saturate(.5);
+    }
+    .module-card.locked:hover { opacity: .85 !important; }
+    .module-num {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--border);
+      line-height: 1;
+    }
+    .module-name {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: .5rem 0 .35rem;
+      letter-spacing: -.02em;
+    }
+    .module-teaser {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.4;
+      flex: 0;
+    }
+    .module-illus {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      margin: .75rem 0;
+    }
+    .module-illus svg { width: 100%; max-height: 100px; }
+    .status-chip {
+      font-family: var(--font-mono);
+      font-size: .6rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .35rem .5rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      align-self: flex-start;
+    }
+    .status-chip.ready { color: var(--cyan); border-color: rgba(0, 217, 255, .4); }
+    .status-chip.locked { color: var(--alert); }
+    .status-chip.open {
+      color: var(--gold);
+      border-color: var(--gold);
+      animation: pulse-gold 2s ease-in-out infinite;
+    }
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 180, 0, .4); }
+      50% { box-shadow: 0 0 12px 2px rgba(255, 180, 0, .35); }
+    }
+    .glitch-text {
+      animation: glitch-locked .4s steps(2) infinite;
+    }
+    @keyframes glitch-locked {
+      0% { transform: translate(0); }
+      33% { transform: translate(-1px, 0); opacity: .8; }
+      66% { transform: translate(1px, 0); }
+    }
+
+    /* Panel */
+    .panel-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0, 0, 0, .7);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .35s var(--ease);
+    }
+    .panel-overlay.open { opacity: 1; pointer-events: auto; }
+    .module-panel {
+      position: fixed;
+      z-index: 501;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, .5);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .module-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .panel-titlebar {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .75rem 1rem;
+      background: rgba(0, 0, 0, .25);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      color: var(--muted);
+    }
+    .panel-dots { display: flex; gap: 6px; }
+    .panel-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .panel-dots span:nth-child(1) { background: #FF5F57; }
+    .panel-dots span:nth-child(2) { background: #FEBC2E; }
+    .panel-dots span:nth-child(3) { background: #28C840; }
+    .panel-filename { flex: 1; }
+    .panel-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: .25rem .5rem;
+      line-height: 1;
+      border-radius: 6px;
+    }
+    .panel-close:hover, .panel-close:focus-visible {
+      color: var(--text);
+      background: rgba(255, 255, 255, .05);
+      outline: 2px solid var(--cyan);
+    }
+    .panel-body {
+      padding: clamp(1.25rem, 4vw, 2.5rem);
+      overflow-y: auto;
+      flex: 1;
+    }
+    .panel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .2s, box-shadow .2s;
+      z-index: 2;
+    }
+    .panel-nav:hover, .panel-nav:focus-visible {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 217, 255, .3);
+      outline: none;
+    }
+    .panel-nav.prev { left: -22px; }
+    .panel-nav.next { right: -22px; }
+    @media (max-width: 768px) {
+      .panel-nav.prev { left: 8px; }
+      .panel-nav.next { right: 8px; }
+    }
+    .panel-body h3 {
+      font-family: var(--font-head);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      margin-bottom: 1rem;
+    }
+    .panel-body p { color: var(--muted); margin-bottom: 1.5rem; max-width: 60ch; }
+    .panel-body h4 {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: .75rem;
+    }
+    .panel-list {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+    .panel-list li {
+      padding: .4rem 0 .4rem 1.25rem;
+      position: relative;
+      font-size: .95rem;
+    }
+    .panel-list li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--cyan);
+    }
+    .timeline-chip {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      padding: .5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    .panel-illus-large {
+      margin-top: 1rem;
+      padding: 2rem;
+      background: rgba(0, 0, 0, .2);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+    }
+    .panel-illus-large svg { max-width: 280px; width: 100%; }
+    .build-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: .75rem;
+      margin-bottom: 1.5rem;
+    }
+    .build-grid-item {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: .85rem;
+      text-align: center;
+      opacity: .4;
+      transition: opacity .3s, border-color .3s, box-shadow .3s;
+    }
+    .build-grid-item.lit {
+      opacity: 1;
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px rgba(0, 217, 255, .15);
+    }
+    .early-access {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+    .early-access input {
+      flex: 1;
+      min-width: 200px;
+      padding: .75rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-body);
+    }
+    .early-access input:focus {
+      outline: 2px solid var(--cyan);
+      border-color: var(--cyan);
+    }
+    .early-access button {
+      padding: .75rem 1.25rem;
+      background: var(--cyan);
+      color: var(--bg);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Ticker */
+    .ticker-wrap {
+      width: 100%;
+      background: #050d16;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: .85rem 0;
+    }
+    .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker 28s linear infinite;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      letter-spacing: .15em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item { padding: 0 1.5rem; white-space: nowrap; }
+
+    /* Contact */
+    .contact-terminal {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(15, 34, 54, .6);
+      backdrop-filter: blur(10px);
+    }
+    .contact-terminal .panel-titlebar { cursor: default; }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+    }
+    @media (min-width: 900px) {
+      .contact-inner { grid-template-columns: 1.2fr 1fr; }
+    }
+    .contact-form label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .35rem;
+    }
+    .contact-form input,
+    .contact-form select,
+    .contact-form textarea {
+      width: 100%;
+      padding: .7rem 1rem;
+      margin-bottom: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: .95rem;
+    }
+    .contact-form input:focus,
+    .contact-form select:focus,
+    .contact-form textarea:focus {
+      outline: 2px solid var(--cyan);
+      border-color: var(--cyan);
+    }
+    .contact-form textarea { min-height: 100px; resize: vertical; }
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1rem;
+    }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      padding: .45rem .75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .chip.selected {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0, 217, 255, .08);
+    }
+    .field-error {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      color: var(--alert);
+      margin: -.5rem 0 .75rem;
+      display: none;
+    }
+    .field-error.show { display: block; }
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--cyan), #00a8cc);
+      border: none;
+      border-radius: 12px;
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity .3s;
+    }
+    .submit-btn:disabled { opacity: .7; cursor: not-allowed; }
+    .submit-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: var(--bg);
+      transition: width .8s linear;
+    }
+    .form-success {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+      font-family: var(--font-mono);
+      color: var(--cyan);
+    }
+    .form-success.show { display: block; }
+    .contact-form.hidden { display: none; }
+    .contact-details h4 {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .contact-details a, .contact-details p {
+      display: block;
+      margin-bottom: .75rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .contact-details a:hover { color: var(--cyan); }
+    .book-call {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: .75rem 1.5rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      text-decoration: none;
+      transition: background .2s, box-shadow .2s;
+    }
+    .book-call:hover {
+      background: rgba(255, 180, 0, .1);
+      box-shadow: 0 0 20px rgba(255, 180, 0, .2);
+    }
+
+    /* Footer */
+    footer {
+      padding: 3rem clamp(1.25rem, 5vw, 3rem) 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+    footer .wordmark { margin-bottom: .5rem; }
+    footer p { color: var(--muted); font-size: .9rem; margin-bottom: 1rem; }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-signoff {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      color: var(--border);
+      letter-spacing: .1em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .ticker-track { animation: none; }
+      .scroll-cue { animation: none; }
+      #loader { transition: opacity .4s; }
+      #loader.wipe { transform: none; opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-texture" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="custom-cursor" id="cursor-dot" aria-hidden="true"></div>
+  <div class="custom-cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+  <div id="loader" role="dialog" aria-label="Loading Cresvane">
+    <canvas id="loader-canvas" aria-hidden="true"></canvas>
+    <div id="loader-lines"></div>
+    <div class="loader-progress-wrap">
+      <div class="loader-pct" id="loader-pct">0%</div>
+      <div class="loader-bar"><div class="loader-bar-fill" id="loader-bar-fill"></div></div>
+    </div>
+    <button type="button" class="loader-skip" id="loader-skip">Skip ›</button>
+  </div>
+
+  <header class="topbar">
+    <div class="wordmark">
+      Cresvane <span class="wordmark-tag">EXE</span>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn-icon" id="sound-toggle" aria-pressed="false">Sound OFF</button>
+      <button type="button" class="btn-text" id="top-contact">Contact</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero reveal" id="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <p class="system-label">SYSTEM // 01</p>
+      <h1 id="hero-headline">We build the tech your business keeps wishing it had.</h1>
+      <p class="sub" id="hero-sub"></p>
+      <p class="story" id="hero-story"></p>
+      <p class="scroll-cue" aria-hidden="true">select a module ↓</p>
+    </section>
+
+    <section class="deck reveal" id="deck" aria-label="Module selection">
+      <div class="deck-header">
+        <p class="system-label">SYSTEM // 02</p>
+        <h2>Select a module</h2>
+      </div>
+      <div class="deck-scroll">
+        <div class="deck-track" id="deck-track" role="list"></div>
+        <div class="deck-progress"><div class="deck-progress-fill" id="deck-progress-fill"></div></div>
+      </div>
+    </section>
+
+    <div class="ticker-wrap" aria-hidden="true">
+      <div class="ticker-track" id="ticker-track"></div>
+    </div>
+
+    <section class="contact reveal" id="contact">
+      <p class="system-label">SYSTEM // 03</p>
+      <div class="contact-terminal">
+        <div class="panel-titlebar">
+          <div class="panel-dots"><span></span><span></span><span></span></div>
+          <span class="panel-filename">contact.exe</span>
+        </div>
+        <div class="contact-inner">
+          <div>
+            <form class="contact-form" id="contact-form" novalidate>
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required autocomplete="name">
+              <span class="field-error" id="err-name">Required field</span>
+
+              <label for="company">Company</label>
+              <input type="text" id="company" name="company" required autocomplete="organization">
+              <span class="field-error" id="err-company">Required field</span>
+
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+              <span class="field-error" id="err-email">Valid email required</span>
+
+              <label for="phone">Phone (optional)</label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel">
+
+              <span class="system-label" style="margin-top:.5rem">What do you need?</span>
+              <div class="chip-group" id="need-chips" role="group" aria-label="Project needs"></div>
+              <span class="field-error" id="err-needs">Select at least one option</span>
+
+              <label for="budget">Budget range</label>
+              <select id="budget" name="budget" required>
+                <option value="">Select range</option>
+                <option value="under-5k">Under £5k</option>
+                <option value="5k-15k">£5k – £15k</option>
+                <option value="15k-40k">£15k – £40k</option>
+                <option value="40k-plus">£40k+</option>
+                <option value="not-sure">Not sure yet</option>
+              </select>
+              <span class="field-error" id="err-budget">Select a budget range</span>
+
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required></textarea>
+              <span class="field-error" id="err-message">Please add a short message</span>
+
+              <button type="submit" class="submit-btn" id="submit-btn">
+                <span id="submit-label">Send transmission</span>
+                <div class="submit-progress" id="submit-progress"></div>
+              </button>
+            </form>
+            <div class="form-success" id="form-success">
+              Transmission received. We'll reply within 1 business day.
+            </div>
+          </div>
+          <div class="contact-details" id="contact-details"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wordmark">Cresvane <span class="wordmark-tag">EXE</span></div>
+    <p id="footer-desc"></p>
+    <div class="footer-links" id="footer-links"></div>
+    <p style="color:var(--muted);font-size:.8rem" id="footer-copy"></p>
+    <p class="footer-signoff">session active — thanks for visiting</p>
+  </footer>
+
+  <div class="panel-overlay" id="panel-overlay" aria-hidden="true"></div>
+  <div class="module-panel" id="module-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" hidden>
+    <div class="panel-titlebar">
+      <div class="panel-dots"><span></span><span></span><span></span></div>
+      <span class="panel-filename" id="panel-filename">module_01.exe</span>
+      <button type="button" class="panel-close" id="panel-close" aria-label="Close panel">×</button>
+    </div>
+    <div class="panel-body" id="panel-body"></div>
+    <button type="button" class="panel-nav prev" id="panel-prev" aria-label="Previous module">‹</button>
+    <button type="button" class="panel-nav next" id="panel-next" aria-label="Next module">›</button>
+  </div>
+
+  <script>
+  const CONFIG = {
+    email: '[EMAIL]',
+    phone: '[PHONE / WHATSAPP]',
+    city: '[CITY]',
+    bookingLink: '[BOOKING LINK]',
+    linkedin: '[LINKEDIN]',
+    instagram: '[INSTAGRAM]',
+    formEndpoint: '[FORM_ENDPOINT]',
+    hero: {
+      subheadline: 'Websites, web apps, automations and integrations — designed, built and supported by one team.',
+      story: 'Every business runs on a pile of spreadsheets, disconnected tools and manual steps. Cresvane finds the friction, then builds the software that removes it.'
+    },
+    footerDescription: 'Custom tech for businesses that are done with workarounds.',
+    needOptions: ['Website', 'Web app', 'Automation', 'Integration', 'Dashboard', 'Not sure yet'],
+    tickerItems: [
+      'NEW MODULE DETECTED',
+      'AUTOMATION ONLINE',
+      'INTEGRATION READY',
+      'SYSTEM UPGRADE AVAILABLE'
+    ],
+    modules: [
+      {
+        id: 'discover',
+        num: '01',
+        name: 'DISCOVER',
+        teaser: 'Find the friction.',
+        status: 'ready',
+        statusLabel: 'ONLINE',
+        panelTitle: 'Find the friction.',
+        panelText: 'We sit with your team, map how work actually happens, and pinpoint where time and money leak.',
+        deliverables: ['Workflow map', 'Problems ranked by impact', 'Recommended solution', 'Rough scope and budget'],
+        timeline: 'Typical timeline: about 1 week',
+        illus: 'radar'
+      },
+      {
+        id: 'design',
+        num: '02',
+        name: 'DESIGN',
+        teaser: 'See it before we build it.',
+        status: 'ready',
+        statusLabel: 'ONLINE',
+        panelTitle: 'See it before we build it.',
+        panelText: 'We turn the plan into user flows and a clickable prototype so you can test the idea before a line of code is written.',
+        deliverables: ['User flows', 'UI design', 'Clickable prototype', 'Technical plan'],
+        timeline: 'Typical timeline: 1–2 weeks',
+        illus: 'wireframe'
+      },
+      {
+        id: 'build',
+        num: '03',
+        name: 'BUILD',
+        teaser: 'Clean code, shipped in sprints.',
+        status: 'ready',
+        statusLabel: 'ONLINE',
+        panelTitle: 'Clean code, shipped in sprints.',
+        panelText: 'We build in short cycles with a working demo every week, so you always see progress and can steer.',
+        deliverables: ['Weekly demos', 'A staging link', 'Tested, documented code that you own'],
+        timeline: 'Typical timeline: 2–8 weeks',
+        illus: 'code'
+      },
+      {
+        id: 'automate',
+        num: '04',
+        name: 'AUTOMATE & INTEGRATE',
+        teaser: 'Make your tools talk.',
+        status: 'ready',
+        statusLabel: 'ONLINE',
+        panelTitle: 'Make your tools talk.',
+        panelText: 'We connect the tools you already use (accounting, CRM, e-commerce, spreadsheets, email) and automate the repetitive work between them.',
+        deliverables: ['System integrations', 'Automated workflows', 'Live dashboards', 'Fewer manual errors'],
+        timeline: 'Typical timeline: 1–4 weeks',
+        illus: 'nodes'
+      },
+      {
+        id: 'launch',
+        num: '05',
+        name: 'LAUNCH & SUPPORT',
+        teaser: 'Go live, then keep improving.',
+        status: 'ready',
+        statusLabel: 'ONLINE',
+        panelTitle: 'Go live, then keep improving.',
+        panelText: 'We deploy, train your team, monitor everything, and keep improving it as your business grows.',
+        deliverables: ['Deployment', 'Handover documentation', 'Team training', 'Ongoing support plan'],
+        timeline: 'Typical timeline: ongoing',
+        illus: 'graph'
+      },
+      {
+        id: 'what-we-build',
+        num: '06',
+        name: 'WHAT WE BUILD',
+        teaser: 'Solutions, not just software.',
+        status: 'ready',
+        statusLabel: 'CATALOG',
+        panelTitle: 'Solutions, not just software.',
+        panelText: 'From customer-facing sites to internal systems — we build what removes friction in your day-to-day.',
+        deliverables: [
+          'Business websites and landing pages',
+          'Web apps and client portals',
+          'Internal dashboards',
+          'Workflow automation',
+          'API integrations',
+          'AI-powered assistants and tools'
+        ],
+        timeline: null,
+        illus: 'grid',
+        isBuildGrid: true
+      },
+      {
+        id: 'products',
+        num: '07',
+        name: 'PRODUCTS',
+        teaser: 'Our own tools — coming soon.',
+        status: 'locked',
+        statusLabel: 'LOCKED',
+        panelTitle: 'Early access',
+        panelText: 'Our own tools for businesses are in development. Join the early-access list to be first in line.',
+        locked: true,
+        illus: 'lock'
+      },
+      {
+        id: 'contact',
+        num: '08',
+        name: 'CONTACT',
+        teaser: 'Start a project.',
+        status: 'open',
+        statusLabel: 'OPEN CHANNEL',
+        isContact: true,
+        panelTitle: 'Start a project.',
+        panelText: 'Tell us what you are trying to fix. We will respond within one business day.',
+        illus: 'signal'
+      }
+    ]
+  };
+
+  /* ——— Illustrations ——— */
+  function illusSVG(type, large) {
+    const h = large ? 200 : 100;
+    const templates = {
+      radar: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Radar sweep illustration"><circle cx="60" cy="${h/2}" r="40" fill="none" stroke="#1E3A55" stroke-width="1"/><circle cx="60" cy="${h/2}" r="28" fill="none" stroke="#1E3A55" stroke-width="1"/><line class="radar-sweep" x1="60" y1="${h/2}" x2="100" y2="${h/2-35}" stroke="#00D9FF" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 60 ${h/2}" to="360 60 ${h/2}" dur="3s" repeatCount="indefinite"/></line><circle class="radar-blip" cx="78" cy="${h/2-18}" r="4" fill="#FFB400"><animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/></circle></svg>`,
+      wireframe: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Wireframe illustration"><rect x="15" y="20" width="90" height="12" fill="none" stroke="#00D9FF" stroke-width="1" stroke-dasharray="90" stroke-dashoffset="90"><animate attributeName="stroke-dashoffset" to="0" dur="1.5s" fill="freeze"/></rect><rect x="15" y="40" width="40" height="50" fill="none" stroke="#8AA1B4" stroke-width="1" stroke-dasharray="180" stroke-dashoffset="180"><animate attributeName="stroke-dashoffset" to="0" dur="1.5s" begin="0.3s" fill="freeze"/></rect><rect x="65" y="40" width="40" height="24" fill="none" stroke="#8AA1B4" stroke-width="1" stroke-dasharray="128" stroke-dashoffset="128"><animate attributeName="stroke-dashoffset" to="0" dur="1.5s" begin="0.5s" fill="freeze"/></rect></svg>`,
+      code: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Code compile illustration"><text x="15" y="35" font-family="monospace" font-size="10" fill="#8AA1B4">&lt;build /&gt;</text><rect x="15" y="50" width="90" height="6" fill="#1E3A55" rx="2"/><rect x="15" y="50" width="0" height="6" fill="#00D9FF" rx="2"><animate attributeName="width" from="0" to="90" dur="2s" repeatCount="indefinite"/></rect><text x="15" y="80" font-family="monospace" font-size="8" fill="#28C840">compiled ✓</text></svg>`,
+      nodes: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Integration nodes"><circle cx="25" cy="${h/2}" r="8" fill="#0F2236" stroke="#00D9FF"/><circle cx="95" cy="${h/2-25}" r="8" fill="#0F2236" stroke="#00D9FF"/><circle cx="95" cy="${h/2+25}" r="8" fill="#0F2236" stroke="#00D9FF"/><line x1="33" y1="${h/2}" x2="87" y2="${h/2-25}" stroke="#1E3A55"/><line x1="33" y1="${h/2}" x2="87" y2="${h/2+25}" stroke="#1E3A55"/><circle r="3" fill="#FFB400"><animateMotion dur="1.5s" repeatCount="indefinite" path="M33,${h/2} L87,${h/2-25}"/></circle></svg>`,
+      graph: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Launch graph"><polyline points="15,${h-25} 40,${h-40} 65,${h-55} 90,${h-70} 105,${h-85}" fill="none" stroke="#00D9FF" stroke-width="2"/><circle cx="105" cy="${h-85}" r="5" fill="#FFB400"><animate attributeName="r" values="5;7;5" dur="1s" repeatCount="indefinite"/></circle></svg>`,
+      grid: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Service grid">${[0,1,2,3,4,5].map((i)=>{const x=20+(i%3)*32,y=25+Math.floor(i/3)*35;return `<rect x="${x}" y="${y}" width="22" height="22" rx="4" fill="#0F2236" stroke="#1E3A55" class="grid-cell" data-i="${i}"><animate attributeName="stroke" values="#1E3A55;#00D9FF;#1E3A55" dur="0.5s" begin="${i*0.25}s" repeatCount="indefinite"/></rect>`}).join('')}</svg>`,
+      lock: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Locked module"><rect x="40" y="${h/2}" width="40" height="35" rx="4" fill="none" stroke="#8AA1B4" stroke-width="2"/><path d="M48 ${h/2} v-12 a12 12 0 0 1 24 0 v12" fill="none" stroke="#8AA1B4" stroke-width="2"/></svg>`,
+      signal: `<svg viewBox="0 0 120 ${h}" role="img" aria-label="Open channel"><circle cx="60" cy="${h/2}" r="12" fill="none" stroke="#FFB400" stroke-width="2"/><circle cx="60" cy="${h/2}" r="22" fill="none" stroke="#FFB400" stroke-width="1" opacity=".6"><animate attributeName="r" values="22;28;22" dur="2s" repeatCount="indefinite"/></circle><circle cx="60" cy="${h/2}" r="32" fill="none" stroke="#FFB400" stroke-width="1" opacity=".3"><animate attributeName="r" values="32;38;32" dur="2s" begin="0.3s" repeatCount="indefinite"/></circle></svg>`
+    };
+    return templates[type] || templates.radar;
+  }
+
+  /* ——— Audio ——— */
+  const AudioEngine = (() => {
+    let ctx = null;
+    let master = null;
+    let ambientNodes = null;
+    let on = false;
+    const vol = 0.12;
+
+    function init() {
+      if (ctx) return;
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+    }
+
+    function setMaster(target, dur = 0.3) {
+      if (!master) return;
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+      master.gain.linearRampToValueAtTime(target * vol, ctx.currentTime + dur);
+    }
+
+    function startAmbient() {
+      if (!ctx || ambientNodes) return;
+      const o1 = ctx.createOscillator();
+      const o2 = ctx.createOscillator();
+      o1.type = 'sine';
+      o2.type = 'sine';
+      o1.frequency.value = 110;
+      o2.frequency.value = 112;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+      const g = ctx.createGain();
+      g.gain.value = 0.15;
+      o1.connect(filter);
+      o2.connect(filter);
+      filter.connect(g);
+      g.connect(master);
+      o1.start();
+      o2.start();
+      ambientNodes = { o1, o2, g };
+    }
+
+    function stopAmbient() {
+      if (ambientNodes) {
+        try { ambientNodes.o1.stop(); ambientNodes.o2.stop(); } catch (e) {}
+        ambientNodes = null;
+      }
+    }
+
+    return {
+      enable() {
+        init();
+        if (ctx.state === 'suspended') ctx.resume();
+        on = true;
+        startAmbient();
+        setMaster(1, 2);
+      },
+      disable() {
+        on = false;
+        setMaster(0, 0.4);
+        setTimeout(stopAmbient, 500);
+      },
+      isOn() { return on; },
+      hover() {
+        if (!on || !ctx) return;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = 2400;
+        o.type = 'sine';
+        g.gain.setValueAtTime(0.08, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+        o.connect(g);
+        g.connect(master);
+        o.start();
+        o.stop(ctx.currentTime + 0.03);
+      },
+      click() {
+        if (!on || !ctx) return;
+        [520, 680].forEach((f, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.frequency.value = f;
+          o.type = 'triangle';
+          const t = ctx.currentTime + i * 0.06;
+          g.gain.setValueAtTime(0.1, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          o.connect(g);
+          g.connect(master);
+          o.start(t);
+          o.stop(t + 0.12);
+        });
+      },
+      whoosh() {
+        if (!on || !ctx) return;
+        const bufferSize = ctx.sampleRate * 0.25;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+        const src = ctx.createBufferSource();
+        src.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 800;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.06, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        src.connect(filter);
+        filter.connect(g);
+        g.connect(master);
+        src.start();
+      }
+    };
+  })();
+
+  /* ——— Loader canvas ——— */
+  class LoaderCanvas {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.particles = [];
+      this.phase = 'scatter';
+      this.resize();
+      this.initParticles();
+    }
+    resize() {
+      this.w = this.canvas.width = this.canvas.offsetWidth * devicePixelRatio;
+      this.h = this.canvas.height = this.canvas.offsetHeight * devicePixelRatio;
+      this.cx = this.w / 2;
+      this.cy = this.h / 2;
+    }
+    initParticles() {
+      const n = window.matchMedia('(max-width: 640px)').matches ? 80 : 160;
+      const targets = this.getCTargets();
+      for (let i = 0; i < n; i++) {
+        const t = targets[i % targets.length] || { x: this.cx, y: this.cy };
+        this.particles.push({
+          x: Math.random() * this.w,
+          y: Math.random() * this.h,
+          tx: t.x,
+          ty: t.y,
+          vx: 0,
+          vy: 0
+        });
+      }
+    }
+    getCTargets() {
+      const pts = [];
+      const scale = Math.min(this.w, this.h) * 0.0022;
+      const ox = this.cx - 25 * scale;
+      const oy = this.cy - 40 * scale;
+      for (let a = 0; a < Math.PI * 2; a += 0.15) {
+        const r = 35 * scale;
+        pts.push({ x: ox + 50 * scale + Math.cos(a) * r * 0.5, y: oy + 40 * scale + Math.sin(a) * r });
+      }
+      for (let y = 0; y < 80; y += 4) {
+        pts.push({ x: ox + 15 * scale, y: oy + y * scale });
+        pts.push({ x: ox + 45 * scale, y: oy + y * scale });
+      }
+      return pts;
+    }
+    update(converge) {
+      this.particles.forEach(p => {
+        if (converge) {
+          p.x += (p.tx - p.x) * 0.08;
+          p.y += (p.ty - p.y) * 0.08;
+        }
+      });
+    }
+    draw(flash) {
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillRect(0, 0, this.w, this.h);
+      if (flash > 0) {
+        this.ctx.fillStyle = `rgba(0, 217, 255, ${flash})`;
+        this.ctx.fillRect(0, 0, this.w, this.h);
+      }
+      this.particles.forEach(p => {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, 2 * devicePixelRatio, 0, Math.PI * 2);
+        this.ctx.fillStyle = '#00D9FF';
+        this.ctx.fill();
+      });
+    }
+  }
+
+  /* ——— Hero network canvas ——— */
+  class HeroNetwork {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.nodes = [];
+      this.mouse = { x: -9999, y: -9999 };
+      this.running = true;
+      this.resize();
+      const count = window.matchMedia('(max-width: 640px)').matches ? 25 : 45;
+      for (let i = 0; i < count; i++) {
+        this.nodes.push({
+          x: Math.random(),
+          y: Math.random(),
+          vx: (Math.random() - 0.5) * 0.0003,
+          vy: (Math.random() - 0.5) * 0.0003
+        });
+      }
+      canvas.addEventListener('mousemove', e => {
+        const r = canvas.getBoundingClientRect();
+        this.mouse.x = (e.clientX - r.left) / r.width;
+        this.mouse.y = (e.clientY - r.top) / r.height;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        this.mouse.x = -9999;
+      });
+    }
+    resize() {
+      this.w = this.canvas.width = this.canvas.offsetWidth * devicePixelRatio;
+      this.h = this.canvas.height = this.canvas.offsetHeight * devicePixelRatio;
+    }
+    tick() {
+      if (!this.running) return;
+      const ctx = this.ctx;
+      ctx.clearRect(0, 0, this.w, this.h);
+      const w = this.w, h = this.h;
+      this.nodes.forEach(n => {
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > 1) n.vx *= -1;
+        if (n.y < 0 || n.y > 1) n.vy *= -1;
+        const mx = this.mouse.x, my = this.mouse.y;
+        if (mx > 0) {
+          const dx = n.x - mx, dy = n.y - my;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 0.15) {
+            n.x += dx * 0.002;
+            n.y += dy * 0.002;
+          }
+        }
+      });
+      for (let i = 0; i < this.nodes.length; i++) {
+        for (let j = i + 1; j < this.nodes.length; j++) {
+          const a = this.nodes[i], b = this.nodes[j];
+          const dx = (a.x - b.x) * w, dy = (a.y - b.y) * h;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120 * devicePixelRatio) {
+            ctx.strokeStyle = `rgba(30, 58, 85, ${1 - dist / (120 * devicePixelRatio)})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x * w, a.y * h);
+            ctx.lineTo(b.x * w, b.y * h);
+            ctx.stroke();
+          }
+        }
+      }
+      this.nodes.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.x * w, n.y * h, 3 * devicePixelRatio, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 217, 255, 0.5)';
+        ctx.fill();
+      });
+    }
+    pause() { this.running = false; }
+    resume() { this.running = true; }
+  }
+
+  /* ——— State ——— */
+  let heroNet, loaderCanvas, activePanelIndex = -1, lastFocusedCard = null;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function bindContent() {
+    document.getElementById('hero-sub').textContent = CONFIG.hero.subheadline;
+    document.getElementById('hero-story').textContent = CONFIG.hero.story;
+    document.getElementById('footer-desc').textContent = CONFIG.footerDescription;
+    document.getElementById('footer-copy').textContent = '© 2026 Cresvane';
+
+    const links = document.getElementById('footer-links');
+    links.innerHTML = `
+      <a href="${CONFIG.linkedin}" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="${CONFIG.instagram}" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:${CONFIG.email}">${CONFIG.email}</a>
+    `;
+
+    const details = document.getElementById('contact-details');
+    details.innerHTML = `
+      <h4>Direct line</h4>
+      <a href="mailto:${CONFIG.email}">${CONFIG.email}</a>
+      <p>${CONFIG.phone}</p>
+      <p>${CONFIG.city}</p>
+      <a class="book-call" href="${CONFIG.bookingLink}" target="_blank" rel="noopener">Book a call</a>
+    `;
+
+    const chips = document.getElementById('need-chips');
+    CONFIG.needOptions.forEach(opt => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = opt;
+      b.dataset.value = opt;
+      b.addEventListener('click', () => {
+        b.classList.toggle('selected');
+        AudioEngine.hover();
+      });
+      chips.appendChild(b);
+    });
+
+    const ticker = document.getElementById('ticker-track');
+    const sep = ' ■ ';
+    const text = CONFIG.tickerItems.join(sep) + sep;
+    ticker.innerHTML = `<span class="ticker-item">${text}</span><span class="ticker-item">${text}</span>`;
+
+    renderDeck();
+  }
+
+  function renderDeck() {
+    const track = document.getElementById('deck-track');
+    track.innerHTML = '';
+    CONFIG.modules.forEach((mod, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'module-card';
+      btn.setAttribute('role', 'listitem');
+      btn.dataset.index = i;
+      if (mod.isContact) btn.classList.add('contact-card');
+      if (mod.locked) btn.classList.add('locked');
+      const chipClass = mod.status === 'locked' ? 'locked' : mod.status === 'open' ? 'open' : 'ready';
+      const teaserExtra = mod.locked ? '<span class="glitch-text" style="font-size:.7rem;display:block;margin-top:.25rem">access pending</span>' : '';
+      btn.innerHTML = `
+        <span class="module-num">${mod.num}</span>
+        <span class="module-name">${mod.name}</span>
+        <span class="module-teaser">${mod.teaser}</span>
+        ${teaserExtra}
+        <div class="module-illus">${illusSVG(mod.illus, false)}</div>
+        <span class="status-chip ${chipClass}">${mod.statusLabel}</span>
+      `;
+      btn.addEventListener('mouseenter', () => AudioEngine.hover());
+      btn.addEventListener('click', () => openModule(i, btn));
+      btn.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModule(i, btn);
+        }
+      });
+      track.appendChild(btn);
+    });
+    track.addEventListener('scroll', updateDeckProgress);
+    updateDeckProgress();
+  }
+
+  function updateDeckProgress() {
+    const track = document.getElementById('deck-track');
+    const fill = document.getElementById('deck-progress-fill');
+    if (!track || !fill) return;
+    const max = track.scrollWidth - track.clientWidth;
+    const pct = max > 0 ? track.scrollLeft / max : 0;
+    const idx = Math.round(pct * (CONFIG.modules.length - 1));
+    fill.style.width = `${((idx + 1) / CONFIG.modules.length) * 100}%`;
+  }
+
+  function openModule(index, cardEl) {
+    const mod = CONFIG.modules[index];
+    AudioEngine.click();
+    lastFocusedCard = cardEl;
+
+    if (mod.isContact) {
+      document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    activePanelIndex = index;
+    const panel = document.getElementById('module-panel');
+    const overlay = document.getElementById('panel-overlay');
+    releaseFocusTrap(panel);
+    document.getElementById('panel-filename').textContent = `module_${mod.num.replace(/^0/, '')}.exe`;
+
+    const body = document.getElementById('panel-body');
+    let html = `<h3 id="panel-title">${mod.panelTitle}</h3><p>${mod.panelText}</p>`;
+
+    if (mod.locked) {
+      html += `
+        <div class="early-access">
+          <input type="email" id="early-email" placeholder="your@email.com" aria-label="Email for early access">
+          <button type="button" id="early-submit">Request access</button>
+        </div>
+        <p id="early-msg" style="font-family:var(--font-mono);font-size:.75rem;color:var(--cyan);margin-top:.75rem;display:none"></p>
+      `;
+    } else if (mod.isBuildGrid) {
+      html += `<h4>What you get</h4><div class="build-grid" id="build-grid-panel"></div>`;
+      mod.deliverables.forEach((d, i) => {
+        html += '';
+      });
+    } else if (mod.deliverables) {
+      html += `<h4>What you get</h4><ul class="panel-list">${mod.deliverables.map(d => `<li>${d}</li>`).join('')}</ul>`;
+      if (mod.timeline) html += `<span class="timeline-chip">${mod.timeline}</span>`;
+    }
+
+    html += `<div class="panel-illus-large">${illusSVG(mod.illus, true)}</div>`;
+    body.innerHTML = html;
+
+    if (mod.isBuildGrid) {
+      const grid = document.getElementById('build-grid-panel');
+      mod.deliverables.forEach((d, i) => {
+        const el = document.createElement('div');
+        el.className = 'build-grid-item';
+        el.textContent = d;
+        el.dataset.i = i;
+        grid.appendChild(el);
+        setTimeout(() => el.classList.add('lit'), 200 + i * 150);
+      });
+    }
+
+    if (mod.locked) {
+      document.getElementById('early-submit').addEventListener('click', submitEarlyAccess);
+    }
+
+    const rect = cardEl.getBoundingClientRect();
+    panel.style.top = rect.top + 'px';
+    panel.style.left = rect.left + 'px';
+    panel.style.width = rect.width + 'px';
+    panel.style.height = rect.height + 'px';
+    panel.style.transition = 'none';
+    panel.hidden = false;
+    panel.classList.add('open');
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    panel.removeAttribute('hidden');
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        panel.style.transition = 'top .45s var(--ease), left .45s var(--ease), width .45s var(--ease), height .45s var(--ease), opacity .35s';
+        const pad = window.innerWidth < 768 ? 12 : 40;
+        panel.style.top = pad + 'px';
+        panel.style.left = pad + 'px';
+        panel.style.width = window.innerWidth - pad * 2 + 'px';
+        panel.style.height = window.innerHeight - pad * 2 + 'px';
+        AudioEngine.whoosh();
+      });
+    });
+
+    document.getElementById('panel-close').focus();
+    trapFocus(panel);
+  }
+
+  function closePanel() {
+    const panel = document.getElementById('module-panel');
+    const overlay = document.getElementById('panel-overlay');
+    releaseFocusTrap(panel);
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    setTimeout(() => {
+      panel.hidden = true;
+      activePanelIndex = -1;
+      if (lastFocusedCard) lastFocusedCard.focus();
+    }, 350);
+  }
+
+  function navPanel(dir) {
+    if (activePanelIndex < 0) return;
+    let next = activePanelIndex + dir;
+    while (next >= 0 && next < CONFIG.modules.length) {
+      const m = CONFIG.modules[next];
+      if (!m.isContact) {
+        const card = document.querySelector(`.module-card[data-index="${next}"]`);
+        closePanel();
+        setTimeout(() => openModule(next, card), 100);
+        return;
+      }
+      next += dir;
+    }
+  }
+
+  function trapFocus(el) {
+    const focusable = [...el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')];
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    function onTab(e) {
+      if (e.key !== 'Tab' || !el.classList.contains('open')) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', onTab);
+    el._trapHandler = onTab;
+  }
+
+  function releaseFocusTrap(el) {
+    if (el._trapHandler) {
+      document.removeEventListener('keydown', el._trapHandler);
+      el._trapHandler = null;
+    }
+  }
+
+  async function submitEarlyAccess() {
+    const email = document.getElementById('early-email').value.trim();
+    const msg = document.getElementById('early-msg');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.style.display = 'block';
+      msg.textContent = 'Enter a valid email.';
+      return;
+    }
+    AudioEngine.click();
+    const ok = await sendForm({ email, type: 'early access', _subject: 'Cresvane early access request' });
+    msg.style.display = 'block';
+    msg.textContent = ok ? 'Request logged. We will be in touch.' : 'Could not send — try emailing us directly.';
+  }
+
+  async function sendForm(data) {
+    const endpoint = CONFIG.formEndpoint;
+    if (endpoint && !endpoint.startsWith('[')) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data)
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+    const body = Object.entries(data)
+      .filter(([k]) => k !== '_subject')
+      .map(([k, v]) => `${k}: ${v}`)
+      .join('\n');
+    window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(data._subject || 'Cresvane contact')}&body=${encodeURIComponent(body)}`;
+    return true;
+  }
+
+  function validateForm() {
+    let valid = true;
+    const show = (id, ok) => {
+      document.getElementById(id).classList.toggle('show', !ok);
+      if (!ok) valid = false;
+    };
+    show('err-name', document.getElementById('name').value.trim());
+    show('err-company', document.getElementById('company').value.trim());
+    show('err-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value));
+    const selected = document.querySelectorAll('#need-chips .chip.selected');
+    show('err-needs', selected.length > 0);
+    show('err-budget', document.getElementById('budget').value);
+    show('err-message', document.getElementById('message').value.trim().length >= 10);
+    return valid;
+  }
+
+  document.getElementById('contact-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    AudioEngine.click();
+    const btn = document.getElementById('submit-btn');
+    const label = document.getElementById('submit-label');
+    const prog = document.getElementById('submit-progress');
+    btn.disabled = true;
+    label.textContent = 'transmitting…';
+    prog.style.width = '100%';
+
+    const needs = [...document.querySelectorAll('#need-chips .chip.selected')].map(c => c.dataset.value).join(', ');
+    const payload = {
+      name: document.getElementById('name').value,
+      company: document.getElementById('company').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      needs,
+      budget: document.getElementById('budget').value,
+      message: document.getElementById('message').value,
+      _subject: 'Cresvane project inquiry'
+    };
+
+    await new Promise(r => setTimeout(r, 900));
+    const ok = await sendForm(payload);
+
+    if (ok) {
+      document.getElementById('contact-form').classList.add('hidden');
+      document.getElementById('form-success').classList.add('show');
+    } else {
+      label.textContent = 'Send transmission';
+      prog.style.width = '0%';
+      btn.disabled = false;
+    }
+  });
+
+  /* Loader */
+  const LOADER_LINES = [
+    '> initializing Cresvane.EXE',
+    '> loading modules: discover / design / build / automate / launch',
+    '> status: ready'
+  ];
+
+  function finishLoader() {
+    const loader = document.getElementById('loader');
+    loader.classList.add('wipe');
+    sessionStorage.setItem('cresvane_booted', '1');
+    setTimeout(() => loader.classList.add('hidden'), reducedMotion ? 400 : 750);
+  }
+
+  function runLoader() {
+    if (sessionStorage.getItem('cresvane_booted')) {
+      document.getElementById('loader').classList.add('hidden');
+      return;
+    }
+    if (reducedMotion) {
+      document.getElementById('loader').style.opacity = '1';
+      setTimeout(finishLoader, 500);
+      return;
+    }
+
+    const linesEl = document.getElementById('loader-lines');
+    const pctEl = document.getElementById('loader-pct');
+    const bar = document.getElementById('loader-bar-fill');
+    loaderCanvas = new LoaderCanvas(document.getElementById('loader-canvas'));
+    let lineIdx = 0;
+    let pct = 0;
+    let converge = false;
+    let flash = 0;
+    let animId;
+
+    function typeLine() {
+      if (lineIdx < LOADER_LINES.length) {
+        const div = document.createElement('div');
+        div.className = 'loader-log';
+        div.textContent = LOADER_LINES[lineIdx];
+        linesEl.appendChild(div);
+        lineIdx++;
+        setTimeout(typeLine, 700);
+      } else {
+        setTimeout(() => { converge = true; }, 200);
+        setTimeout(() => { flash = 0.35; setTimeout(() => flash = 0, 150); }, 2200);
+        setTimeout(finishLoader, 2800);
+      }
+    }
+    typeLine();
+
+    const tick = () => {
+      pct = Math.min(100, pct + 0.8);
+      pctEl.textContent = Math.floor(pct) + '%';
+      bar.style.width = pct + '%';
+      if (loaderCanvas) {
+        loaderCanvas.update(converge);
+        loaderCanvas.draw(flash);
+      }
+      if (pct < 100 || !document.getElementById('loader').classList.contains('hidden')) {
+        animId = requestAnimationFrame(tick);
+      }
+    };
+    tick();
+
+    document.getElementById('loader-skip').addEventListener('click', () => {
+      cancelAnimationFrame(animId);
+      finishLoader();
+    });
+  }
+
+  /* Sound toggle */
+  function initSound() {
+    const btn = document.getElementById('sound-toggle');
+    const stored = localStorage.getItem('cresvane_sound') === 'on';
+    function updateUI() {
+      const on = AudioEngine.isOn();
+      btn.textContent = on ? 'Sound ON' : 'Sound OFF';
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-pressed', on);
+    }
+    if (stored) {
+      AudioEngine.enable();
+      updateUI();
+    }
+    btn.addEventListener('click', () => {
+      if (AudioEngine.isOn()) {
+        AudioEngine.disable();
+        localStorage.setItem('cresvane_sound', 'off');
+      } else {
+        AudioEngine.enable();
+        localStorage.setItem('cresvane_sound', 'on');
+      }
+      updateUI();
+    });
+  }
+
+  /* Cursor */
+  function initCursor() {
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      document.body.classList.add('touch-device');
+      document.getElementById('cursor-dot').style.display = 'none';
+      document.getElementById('cursor-ring').style.display = 'none';
+      return;
+    }
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+      rx += (e.clientX - rx) * 0.15;
+      ry += (e.clientY - ry) * 0.15;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+    });
+    document.querySelectorAll('button, a, .module-card, .chip, select, input, textarea').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+    });
+  }
+
+  /* Reveal + glitch */
+  function initReveal() {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
+
+  function initGlitch() {
+    if (reducedMotion) return;
+    const h1 = document.getElementById('hero-headline');
+    setInterval(() => {
+      h1.classList.add('glitch-active');
+      setTimeout(() => h1.classList.remove('glitch-active'), 150);
+    }, 4000 + Math.random() * 3000);
+  }
+
+  document.getElementById('panel-close').addEventListener('click', closePanel);
+  document.getElementById('panel-overlay').addEventListener('click', closePanel);
+  document.getElementById('panel-prev').addEventListener('click', () => navPanel(-1));
+  document.getElementById('panel-next').addEventListener('click', () => navPanel(1));
+  document.getElementById('top-contact').addEventListener('click', () => {
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && activePanelIndex >= 0) closePanel();
+    if (activePanelIndex >= 0 && e.key === 'ArrowLeft') navPanel(-1);
+    if (activePanelIndex >= 0 && e.key === 'ArrowRight') navPanel(+1);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (heroNet) {
+      if (document.hidden) heroNet.pause();
+      else heroNet.resume();
+    }
+  });
+
+  const heroObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!heroNet) return;
+      if (e.isIntersecting) heroNet.resume();
+      else heroNet.pause();
+    });
+  }, { threshold: 0 });
+  heroObs.observe(document.getElementById('hero'));
+
+  function loopHero() {
+    if (heroNet) heroNet.tick();
+    requestAnimationFrame(loopHero);
+  }
+
+  bindContent();
+  initSound();
+  initCursor();
+  initReveal();
+  initGlitch();
+  runLoader();
+  heroNet = new HeroNetwork(document.getElementById('hero-canvas'));
+  window.addEventListener('resize', () => heroNet.resize());
+  loopHero();
+  </script>
+</body>
+</html>
